@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,400');
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+#degrees {
+  margin: 0;
+  display: flex;
+  margin: 50px 0 40px 50px;
+}
+
+.degrees__place {
+  align-self: center;
+  color: #b5b5b5;
+  font-weight: 100;
+  margin-left: -20px;
+  margin-top: 45px;
+}
+
+.degrees__number {
+  color: #797979;
+  font-weight: 100;
+  font-size: 72px;
+}
+
+#info {
+  color: #a9bcce;
+  display: flex;
+  font-size: 22px;
+  font-weight: 100;
+  margin-left: 55px;
+  text-align: left;
+}
+
+.info__text {
+  font-size: 12px;
+}
+
+#info > div {
+  margin-right: 40px;
+}
+
+.info__temperature {
+  display: flex;
+  flex-wrap: wrap;
+}
