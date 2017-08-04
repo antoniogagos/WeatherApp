@@ -12,40 +12,64 @@ import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import './App.css';
 import axios from 'axios';
 
-class UserLocation extends Component {
+class UserLocationInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: '',
-      longitude: '',
-      temperature: '',
-      temp_max: '',
-      temp_min: '',
-      humidity: '',
-/*    pollution: '', */
-      place: '',
+      temperature: undefined,
+      temp_max: undefined,
+      temp_min: undefined,
+      humidity: undefined,
+      place: undefined,
       avg_min: [],
       avg_max: [],
-      nextDaysForecast: {}
     }
 
-    this._successGeoloc = this._successGeoloc.bind(this);
-    this._errorGeoloc = this._errorGeoloc.bind(this);
   }
 
   componentDidMount() {
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    };
+    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='
+              +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric')
+    .then(function(response) {
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this._successGeoloc, this._errorGeoloc, options);
-    }
+      let data = response.data.main;
+      this.setState({
+        temperature: data.temp,
+        temp_max: data.temp_max,
+        temp_min: data.temp_min,
+        humidity: data.humidity,
+        place: response.data.name
+      });
+
+      const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat='
+                           +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric';
+      const avg = {};
+
+      axios.get(url_forecast).then(function(response) {
+        for(let item of response.data.list) {
+          const weekDay = new Date(item.dt*1000).getDay();
+          avg[weekDay] = avg[weekDay] || [];
+          avg[weekDay].push(item);
+        }
+ 
+        let avg_min = [];
+        let avg_max = [];
+        for (let i of avg[new Date().getDay()]) {
+          avg_min.push(i.main.temp_min);
+          avg_max.push(i.main.temp_max);
+        }
+        
+        this.setState({
+          avg_min: avg_min.reduce((a, b)=>a+b/avg_min.length, 0),
+          avg_max: avg_max.reduce((a, b)=>a+b/avg_max.length, 0),
+          nextDaysForecast: avg
+        });
+      }.bind(this));
+    }.bind(this));
   }
 
-  render() { 
+  render() {
     return (
       <div>
         <div id="degrees">
@@ -58,7 +82,7 @@ class UserLocation extends Component {
             <span className="info__text">Humidity</span>
           </div>
           <div>
-            <div>{Math.round(this.state.avg_min)}º/{Math.round(this.state.avg_max)}º</div>
+            <div>{Math.round(this.state.avg_max)}º/{Math.round(this.state.avg_min)}º</div>
             <span className="info__text">Temperature</span>
           </div>
         </div>
@@ -66,79 +90,72 @@ class UserLocation extends Component {
     )
   }
 
-  _successGeoloc(position) {
-    
-    this.setState({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    });
-    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='+this.state.latitude+'&lon='+this.state.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric')
-    .then(function (response) {
-      let data = response.data.main;
-      this.setState({
-        temperature: data.temp,
-        temp_max: data.temp_max,
-        temp_min: data.temp_min,
-        humidity: data.humidity,
-        place: response.data.name,
-      });
+}
 
-      const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat='+this.state.latitude+'&lon='+this.state.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric';
-      const avg = {};
-      axios.get(url_forecast).then(function(response) {
-        console.log(response.data);
-        for(let item of response.data.list) {
-          const weekDay = new Date(item.dt*1000).getDay();
-          avg[weekDay] = avg[weekDay] || [];
-          avg[weekDay].push(item);
-        }
-
-        let avg_min = [];
-        let avg_max = [];
-        for (let i of avg[new Date().getDay()]) {
-          avg_min.push(i.main.temp_min);
-          avg_max.push(i.main.temp_max);
-        }
-        
-        this.setState({
-          avg_min: avg_min.reduce((a, b) => (a+b)/avg_min.length),
-          avg_max: avg_max.reduce((a, b) => (a+b)/avg_max.length),
-          nextDaysForecast: avg
-        });
-      }.bind(this));
-/*       const URL = 'http://api.openweathermap.org/pollution/v1/co/'+Math.round(this.state.latitude)+','+Math.round(this.state.longitude) +'/current.json?appid=9004c6600242d177657696c6f37cd725'
-
-      axios.get(URL).then( function(response) {
-        this.setState({pollution: response.data.data[0].value});
-        console.log(response);
-      }.bind(this)); */
-    }.bind(this));  
+class NextDaysForecast extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      today: new Date().getDay(),
+    }
   }
-  
-  _errorGeoloc(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-  };
 
+  render() {
+      return (
+        <h1>{this.state.today}</h1>
+      )
+    }
 }
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
+      open: false,
+      latitude: undefined,
+      longitude: undefined,
     }
+    this._searchGeoloc = this._searchGeoloc.bind(this);
+    this._errorGeoloc = this._errorGeoloc.bind(this);
   }
   
-  _handleClickDrawer = () => this.setState({open: !this.state.open});
+  componentWillMount() {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this._searchGeoloc, this._errorGeoloc, options);
+    }
+
+  }
 
   render() {
-
     const muiTheme = getMuiTheme({
       appBar: {
         height: 50,
         color: '#fbfbfb',
       },
     });
+
+    if(!this.state.latitude || !this.state.longitude) {
+      return (
+        <div className="sk-cube-grid">
+          <div className="sk-cube sk-cube1"></div>
+          <div className="sk-cube sk-cube2"></div>
+          <div className="sk-cube sk-cube3"></div>
+          <div className="sk-cube sk-cube4"></div>
+          <div className="sk-cube sk-cube5"></div>
+          <div className="sk-cube sk-cube6"></div>
+          <div className="sk-cube sk-cube7"></div>
+          <div className="sk-cube sk-cube8"></div>
+          <div className="sk-cube sk-cube9"></div>
+        </div>
+      )
+    }
+    
 
     return (
       <div className="App">
@@ -149,10 +166,11 @@ class App extends Component {
                 titleStyle={{color: '#000'}}
                 iconClassNameRight="muidocs-icon-navigation-expand-more"
                 iconElementLeft={<IconButton><NavigationMenu color={'#000'}/></IconButton>}
-                onLeftIconButtonTouchTap={this._handleClickDrawer}
-                />
-                
-            <UserLocation />
+                onLeftIconButtonTouchTap={this._handleClickDrawer}/>
+
+            <UserLocationInfo latitude={this.state.latitude} longitude={this.state.longitude}/>
+
+            <NextDaysForecast />
 
             <Drawer 
                 open={this.state.open}
@@ -167,6 +185,21 @@ class App extends Component {
       </div>
     );
   }
+
+  _handleClickDrawer = () => this.setState({open: !this.state.open});
+
+  _searchGeoloc(position) {
+    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+    this.setState({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    });
+  }
+  
+  _errorGeoloc(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
 }
 
 export default App;
