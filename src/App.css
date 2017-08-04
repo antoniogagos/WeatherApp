@@ -67,6 +67,11 @@ body {
   flex-wrap: wrap;
 }
 
+#listDays {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
 
 /*** spinner bounce  block ***/
 

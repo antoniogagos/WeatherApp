@@ -17,22 +17,15 @@ class UserLocationInfo extends Component {
     super(props);
     this.state = {
       temperature: undefined,
-      temp_max: undefined,
-      temp_min: undefined,
       humidity: undefined,
       place: undefined,
-      avg_min: [],
-      avg_max: [],
     }
 
   }
 
   componentDidMount() {
-    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='
-              +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric')
+    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='+this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric')
     .then(function(response) {
-
       let data = response.data.main;
       this.setState({
         temperature: data.temp,
@@ -42,34 +35,11 @@ class UserLocationInfo extends Component {
         place: response.data.name
       });
 
-      const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat='
-                           +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric';
-      const avg = {};
-
-      axios.get(url_forecast).then(function(response) {
-        for(let item of response.data.list) {
-          const weekDay = new Date(item.dt*1000).getDay();
-          avg[weekDay] = avg[weekDay] || [];
-          avg[weekDay].push(item);
-        }
- 
-        let avg_min = [];
-        let avg_max = [];
-        for (let i of avg[new Date().getDay()]) {
-          avg_min.push(i.main.temp_min);
-          avg_max.push(i.main.temp_max);
-        }
-        
-        this.setState({
-          avg_min: avg_min.reduce((a, b)=>a+b/avg_min.length, 0),
-          avg_max: avg_max.reduce((a, b)=>a+b/avg_max.length, 0),
-          nextDaysForecast: avg
-        });
-      }.bind(this));
     }.bind(this));
   }
 
   render() {
+    
     return (
       <div>
         <div id="degrees">
@@ -82,29 +52,89 @@ class UserLocationInfo extends Component {
             <span className="info__text">Humidity</span>
           </div>
           <div>
-            <div>{Math.round(this.state.avg_max)}º/{Math.round(this.state.avg_min)}º</div>
+            <div>{Math.round(this.props.avg_max)}º/{Math.round(this.props.avg_min)}º</div>
             <span className="info__text">Temperature</span>
           </div>
         </div>
       </div>
     )
   }
-
 }
 
-class NextDaysForecast extends Component {
+class ForecastDisplay extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      today: new Date().getDay(),
+      avg_min: undefined,
+      avg_max: undefined,
+      forecastDays: undefined,
+      nextDays: undefined
     }
   }
 
-  render() {
-      return (
-        <h1>{this.state.today}</h1>
-      )
+  componentWillMount() {
+    const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat='
+                         +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric';
+    const avg = [];
+    axios.get(url_forecast).then(function(response) {
+      for(let item of response.data.list) {
+        const weekDay = new Date(item.dt*1000).getDay();
+        avg[weekDay] = avg[weekDay] || [];
+        avg[weekDay].push(item);
+      }
+      
+      let avg_min = [];
+      let avg_max = [];
+      for (let i of avg[new Date().getDay()]) {
+        avg_min.push(i.main.temp_min);
+        avg_max.push(i.main.temp_max);
+      }
+
+      this.setState({
+        avg_min: avg_min.reduce((a, b)=>a+b/avg_min.length, 0),
+        avg_max: avg_max.reduce((a, b)=>a+b/avg_max.length, 0),
+        forecastDays: avg
+      });
+
+      let today = new Date().getDay();
+
+      for (let i = today; i < today+5; i++) {
+        if(i > 6) {
+          console.log(this.state.forecastDays[i-7])
+        } else {
+        console.log(this.state.forecastDays[i]);
+        }
+      }
+
+    let days = [];
+    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+    for(let i = new Date().getDay(); i < new Date().getDay()+5; i++) {
+      if(i > 6) {
+        days.push(weekDicc[i-7]);
+      } else {
+        days.push(weekDicc[i]);
+      }
+      this.setState({
+        nextDays: days
+      });
     }
+    }.bind(this));
+  }
+
+  render() {
+
+    if(!this.state.nextDays) { return (<h1>loading</h1>)}
+    const listDays = this.state.nextDays.map(day =><div key={day}>{day}</div>);
+    console.log(listDays);
+    return (
+      <div>
+        <UserLocationInfo latitude={this.props.latitude} longitude={this.props.longitude} 
+                          avg_min={this.state.avg_min} avg_max={this.state.avg_max}/>
+        <div id="listDays">{listDays}</div>
+      </div>
+    )
+  }
 }
 
 class App extends Component {
@@ -168,9 +198,7 @@ class App extends Component {
                 iconElementLeft={<IconButton><NavigationMenu color={'#000'}/></IconButton>}
                 onLeftIconButtonTouchTap={this._handleClickDrawer}/>
 
-            <UserLocationInfo latitude={this.state.latitude} longitude={this.state.longitude}/>
-
-            <NextDaysForecast />
+            <ForecastDisplay latitude={this.state.latitude} longitude={this.state.longitude}/>
 
             <Drawer 
                 open={this.state.open}
@@ -189,7 +217,6 @@ class App extends Component {
   _handleClickDrawer = () => this.setState({open: !this.state.open});
 
   _searchGeoloc(position) {
-    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
     this.setState({
       latitude: position.coords.latitude,
