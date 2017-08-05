@@ -72,11 +72,16 @@ class ForecastDisplay extends Component {
     }
   }
 
+
+
   componentWillMount() {
+    let today = new Date().getDay();
+
     const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat='
                          +this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric';
     const avg = [];
     axios.get(url_forecast).then(function(response) {
+
       for(let item of response.data.list) {
         const weekDay = new Date(item.dt*1000).getDay();
         avg[weekDay] = avg[weekDay] || [];
@@ -85,9 +90,19 @@ class ForecastDisplay extends Component {
       
       let avg_min = [];
       let avg_max = [];
-      for (let i of avg[new Date().getDay()]) {
-        avg_min.push(i.main.temp_min);
-        avg_max.push(i.main.temp_max);
+
+    // If it's too late there are no avg temp for the remaining day so it should take avg temp for the following day.
+      const checkAvgTemp = (a) => {
+        for (let i of avg[today+a]) {
+          avg_min.push(i.main.temp_min);
+          avg_max.push(i.main.temp_max);
+        }
+      }
+
+      if(!avg[today]) {
+        checkAvgTemp(1);
+      } else {
+        checkAvgTemp(0);
       }
 
       this.setState({
@@ -96,42 +111,81 @@ class ForecastDisplay extends Component {
         forecastDays: avg
       });
 
-      let today = new Date().getDay();
+      const avg_days = {temp_min: [], temp_max: []};
+      let i = 0;
+      for (let day of this.state.forecastDays) {
+        let totalMin = [];
+        let totalMax = [];
 
-      for (let i = today; i < today+5; i++) {
+        if(!day) {} else {
+          day.forEach(item => {
+            totalMin.push(item.main.temp_min);
+            totalMax.push(item.main.temp_max);
+          });
+        }
+        avg_days.temp_min.push(totalMin.reduce((a, b)=>a+b/totalMin.length, 0));
+        avg_days.temp_max.push(totalMax.reduce((a, b) => a+b/totalMax.length, 0));
+        i+=1
+      }
+      
+      let days = [];
+      const weekDicc = {
+        0: {day: "SUN",},
+        1: {day: "MON",},
+        2: {day: "TUE",},
+        3: {day: "WED",},
+        4: {day: "THU",},
+        5: {day: "FRI",}, 
+        6: {day: "SAT"}
+      };
+
+      for(let i = new Date().getDay(); i < new Date().getDay()+5; i++) {
+        var j = 0;
         if(i > 6) {
-          console.log(this.state.forecastDays[i-7])
+          days.push(weekDicc[i-7]);
+          j += 1;
         } else {
-        console.log(this.state.forecastDays[i]);
+          days.push(weekDicc[i]);
+          j += 1;
+        }
+      }
+      
+      let y = 0;
+       for (let i = today; i < today+5; i++) {
+        if(i > 6) {
+          days[y].temp_min = avg_days.temp_min[i-7];
+          days[y].temp_max = avg_days.temp_max[i-7];
+          y+=1;
+        } else {
+          days[y].temp_min = avg_days.temp_min[i];
+          days[y].temp_max = avg_days.temp_max[i];
+          y+=1;
         }
       }
 
-    let days = [];
-    const weekDicc = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-
-    for(let i = new Date().getDay(); i < new Date().getDay()+5; i++) {
-      if(i > 6) {
-        days.push(weekDicc[i-7]);
-      } else {
-        days.push(weekDicc[i]);
-      }
       this.setState({
         nextDays: days
       });
-    }
+
     }.bind(this));
   }
 
   render() {
-
     if(!this.state.nextDays) { return (<h1>loading</h1>)}
-    const listDays = this.state.nextDays.map(day =><div key={day}>{day}</div>);
-    console.log(listDays);
+    let days = this.state.nextDays;
+    
+    console.log(days);
+    const listDays = days.map((item) => 
+      <div key={this.state.nextDays.indexOf(item)}>
+        <h1>{item.day}</h1>
+        <p>{Math.round(item.temp_max)}º/{Math.round(item.temp_min)}º</p>
+      </div>);
+
     return (
       <div>
         <UserLocationInfo latitude={this.props.latitude} longitude={this.props.longitude} 
                           avg_min={this.state.avg_min} avg_max={this.state.avg_max}/>
-        <div id="listDays">{listDays}</div>
+         <div id="listDays">{listDays}</div>
       </div>
     )
   }
