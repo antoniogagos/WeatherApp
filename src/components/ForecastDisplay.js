@@ -8,7 +8,6 @@ import drizzleIcon from '../images/weather-drizzle-day.png';
 import heavyRainIcon from '../images/weather-showers-night.png'
 import lightRain from '../images/weather-showers-scattered-day.png'
 
-
 export default class ForecastDisplay extends Component {
   constructor(props) {
     super(props);
