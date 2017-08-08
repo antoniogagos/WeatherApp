@@ -8,16 +8,19 @@ export default class WeatherChart extends Component {
     this.state = {
       config: {
         xAxis: {
-          categories: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
+          categories: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+          categoryToBeModified: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
         },
 
         series: [{
-          data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5]
+          data: [],
         }]
       },
-
       dayTemps: undefined,
     }
+
+    this._displaySelectedDayChart = this._displaySelectedDayChart.bind(this);
+
   }
 
   componentDidMount() {
@@ -28,8 +31,19 @@ export default class WeatherChart extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this._displaySelectedDayChart(nextProps);
+  }
+
+  _displaySelectedDayChart(nextProps) {
     const config = this.state.config;
-    config.series[0].data = this.state.dayTemps[nextProps.selectedDay].temps;
+    let selectedDayTemps = [];
+    if(nextProps) {
+      selectedDayTemps = this.state.dayTemps[nextProps.selectedDay].temps;
+    }
+    else {
+      selectedDayTemps = this.state.dayTemps[this.props.selectedDay].temps;
+    }
+    config.series[0].data = selectedDayTemps;
     this.setState({
       config: config
     });
@@ -60,21 +74,22 @@ export default class WeatherChart extends Component {
       avg[weekDay] = avg[weekDay] || [];
       avg[weekDay].push(item);
     }
+    
     for (let day of avg) {
       if(!day) {} else {
         const dailyTemps = [];
         day.forEach(hourly => {
           dailyTemps.push(hourly.main.temp);
         });
-        if((avg.indexOf(day)-1) > 4) {} else {
-          dayTemps[avg.indexOf(day)-1].temps = dailyTemps;
+        if((avg.indexOf(day)-today) > 4) {} else {
+          dayTemps[avg.indexOf(day)-today].temps = dailyTemps;
         }
         this.setState({
           dayTemps: dayTemps
         });
       }
-    } 
-
+    }
+    this._displaySelectedDayChart();
   }
 
   render() {
