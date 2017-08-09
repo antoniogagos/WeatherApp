@@ -11,13 +11,23 @@ export default class UserLocationInfo extends Component {
       place: undefined,
 
       today_temp: undefined,
-      today_humidity: undefined
+      today_humidity: undefined,
+
+      search: false
     }
 
+    this._requestLocationInfo = this._requestLocationInfo.bind(this);
   }
 
   componentDidMount() {
-    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='+this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric')
+    this._requestLocationInfo();
+  }
+
+  // refactor this
+  _requestLocationInfo() {
+    axios.get('http://api.openweathermap.org/data/2.5/weather?lat='+
+        this.props.latitude+'&lon='+this.props.longitude+
+        '&appid=9004c6600242d177657696c6f37cd725&units=metric')
     .then(function(response) {
       let data = response.data.main;
       this.setState({
@@ -42,6 +52,22 @@ export default class UserLocationInfo extends Component {
         temperature: this.state.today_temp,
         humidity: this.state.today_humidity
       });
+    }
+    if(this.props.latitude !== nextProps.latitude) {
+      axios.get('http://api.openweathermap.org/data/2.5/weather?lat='+
+        nextProps.latitude+'&lon='+nextProps.longitude+
+        '&appid=9004c6600242d177657696c6f37cd725&units=metric')
+      .then(function(response) {
+        console.log(response);
+        let data = response.data.main;
+        this.setState({
+          temperature: data.temp,
+          today_temp: data.temp,
+          humidity: data.humidity,
+          today_humidity: data.humidity,
+          place: response.data.name
+        });
+      }.bind(this));
     }
   }
 

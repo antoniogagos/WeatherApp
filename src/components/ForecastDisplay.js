@@ -23,7 +23,9 @@ export default class ForecastDisplay extends Component {
   componentDidMount() {
     const now = new Date();
     const today = now.getDay();
-    const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+this.props.latitude+'&lon='+this.props.longitude+'&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
+    const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
+        this.props.latitude+'&lon='+this.props.longitude+
+        '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
 
     const weekDicc = {
       0: {day: "SUN"},
@@ -124,6 +126,7 @@ export default class ForecastDisplay extends Component {
       <div>
         <UserLocationInfo latitude={this.props.latitude} longitude={this.props.longitude} 
                           day={this.state.selectedDay}/>
+                          
         <WeatherChart latitude={this.props.latitude} longitude={this.props.longitude} selectedDay={this.state.addClassIndex}/>
          <div id="listDays">{dailyForecast}</div>
       </div>

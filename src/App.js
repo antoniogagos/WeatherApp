@@ -84,7 +84,7 @@ class App extends Component {
                 iconElementLeft={<IconButton><NavigationMenu color={'#fff'}/></IconButton>}
                 onLeftIconButtonTouchTap={this._handleClickDrawer}/>
 
-            <SearchPlaceDialog />
+            <SearchPlaceDialog onUserSearch={this.handleUserSearch}/>
             <ForecastDisplay latitude={this.state.latitude} longitude={this.state.longitude}/>
 
             <Drawer 
@@ -102,6 +102,14 @@ class App extends Component {
   }
 
   _handleClickDrawer = () => this.setState({open: !this.state.open});
+
+  handleUserSearch = (lat, lng) => {
+    console.log('t e m p o');
+    this.setState({ 
+      latitude: lat,
+      longitude: lng
+    });
+  };
 
   _searchGeoloc(position) {
     this.setState({
