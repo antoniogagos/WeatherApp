@@ -105,6 +105,31 @@ body {
 .highcharts-container {
   height: 300px !important;
 }
+
+#PlacesAutocomplete__root {
+  width: 100%;
+}
+
+#PlacesAutocomplete__autocomplete-container {
+  position: static !important;
+  margin: 0 auto;
+  z-index: 1150;
+  max-height: 200px !important;
+  border: none !important;
+  margin-top: 5px !important;
+  overflow: scroll;
+} 
+
+#PlacesAutocomplete__root input {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  border: honeydew;
+  display: block;
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  border-radius: 2px;
+  outline: none;
+}
 /*** spinner bounce  block ***/
 .sk-cube-grid {
   width: 50px;
@@ -166,4 +191,4 @@ body {
     -webkit-transform: scale3D(0, 0, 1);
             transform: scale3D(0, 0, 1);
   } 
-} 
+}

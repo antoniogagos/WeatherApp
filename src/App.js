@@ -7,9 +7,16 @@ import registerServiceWorker from './registerServiceWorker';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
+
+import SvgIcon from 'material-ui/SvgIcon';
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
-import ForecastDisplay from './components/ForecastDisplay.js'
+import ForecastDisplay from './components/ForecastDisplay.js';
+import SearchPlaceDialog from './components/SearchPlaceDialog.js';
 import './App.css';
+
+
+const google = window.google;
 
 class App extends Component {
   constructor(props) {
@@ -18,6 +25,7 @@ class App extends Component {
       open: false,
       latitude: undefined,
       longitude: undefined,
+      search: true,
     }
     this._searchGeoloc = this._searchGeoloc.bind(this);
     this._errorGeoloc = this._errorGeoloc.bind(this);
@@ -36,11 +44,15 @@ class App extends Component {
 
   }
 
+  _handleOnSearch() {
+    console.log("hola");
+  }
+
   render() {
     const muiTheme = getMuiTheme({
       appBar: {
         height: 50,
-        color: '#fbfbfb',
+        color: '#2196f3',
       },
     });
 
@@ -59,18 +71,20 @@ class App extends Component {
         </div>
       )
     }
+    const displaySearch = this.state.search;
 
     return (
+      
       <div className="App">
         <MuiThemeProvider muiTheme={muiTheme}>
           <div>
             <AppBar
                 title="Tempo"
-                titleStyle={{color: '#000'}}
-                iconClassNameRight="muidocs-icon-navigation-expand-more"
-                iconElementLeft={<IconButton><NavigationMenu color={'#000'}/></IconButton>}
+                titleStyle={{color: '#fff', marginRight: 20}}
+                iconElementLeft={<IconButton><NavigationMenu color={'#fff'}/></IconButton>}
                 onLeftIconButtonTouchTap={this._handleClickDrawer}/>
 
+            <SearchPlaceDialog />
             <ForecastDisplay latitude={this.state.latitude} longitude={this.state.longitude}/>
 
             <Drawer 

@@ -9,18 +9,17 @@ export default class WeatherChart extends Component {
       config: {
         xAxis: {
           categories: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
-          categoryToBeModified: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00']
         },
-
         series: [{
           data: [],
         }]
       },
+      categoryModify: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
       dayTemps: undefined,
     }
 
     this._displaySelectedDayChart = this._displaySelectedDayChart.bind(this);
-
+    this._slicePastHoursChart = this._slicePastHoursChart.bind(this);
   }
 
   componentDidMount() {
@@ -34,33 +33,49 @@ export default class WeatherChart extends Component {
     this._displaySelectedDayChart(nextProps);
   }
 
-  _displaySelectedDayChart(nextProps) {
-    const config = this.state.config;
-    let selectedDayTemps = [];
-    if(nextProps) {
-      selectedDayTemps = this.state.dayTemps[nextProps.selectedDay].temps;
+   _displaySelectedDayChart(nextProps) {
+     const config = this.state.config;
+     let selectedDayTemps = []; 
+     if (this.state.dayTemps[0]) {
+      if(nextProps) {
+        selectedDayTemps = this.state.dayTemps[nextProps.selectedDay].temps;
+        this._slicePastHoursChart(selectedDayTemps, config);
+      }
+      else {
+        selectedDayTemps = this.state.dayTemps[this.props.selectedDay].temps;
+        this._slicePastHoursChart(selectedDayTemps, config);
+      }
+      config.series[0].data = selectedDayTemps;
+      this.setState({
+        config: config
+      });
+     }
+   } 
+
+  _slicePastHoursChart(day, config) {
+    if(day) {
+      const categoryMod = this.state.categoryModify;
+      if(day.length < 8) {
+        config.xAxis.categories = categoryMod.slice((8-day.length)-8); 
+      } else {
+        config.xAxis.categories = categoryMod
+      }
     }
-    else {
-      selectedDayTemps = this.state.dayTemps[this.props.selectedDay].temps;
-    }
-    config.series[0].data = selectedDayTemps;
-    this.setState({
-      config: config
-    });
   }
 
   _handleForecastResponse(response) {
     const avg = [];
     const today = new Date().getDay();
     const weekDicc = {
-      1: {day: "MON", temps: []},
       0: {day: "SUN", temps: []},
+      1: {day: "MON", temps: []},
       2: {day: "TUE", temps: []},
       3: {day: "WED", temps: []},
       4: {day: "THU", temps: []},
       5: {day: "FRI", temps: []},
       6: {day: "SAT", temps: []}
     };
+
     const dayTemps = [];
     for (let i = today; i < today+5; i++) {
       if(i > 6) {
@@ -74,21 +89,28 @@ export default class WeatherChart extends Component {
       avg[weekDay] = avg[weekDay] || [];
       avg[weekDay].push(item);
     }
-    
+
+    var arrayAvgTemps = [];
     for (let day of avg) {
       if(!day) {} else {
         const dailyTemps = [];
         day.forEach(hourly => {
           dailyTemps.push(hourly.main.temp);
         });
-        if((avg.indexOf(day)-today) > 4) {} else {
-          dayTemps[avg.indexOf(day)-today].temps = dailyTemps;
-        }
-        this.setState({
-          dayTemps: dayTemps
-        });
+        arrayAvgTemps[avg.indexOf(day)] = dailyTemps;
       }
     }
+    for (let item of dayTemps) {
+      if(today+dayTemps.indexOf(item) > 6) {
+        dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)-7];
+      }
+       dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)];
+    }
+      console.log(dayTemps);
+    this.setState({
+      dayTemps: dayTemps
+    });
+
     this._displaySelectedDayChart();
   }
 
