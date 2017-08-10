@@ -18,14 +18,31 @@ export default class ForecastDisplay extends Component {
       addClassIndex: 0
     }
     this._onClickForecastDay = this._onClickForecastDay.bind(this);
+    this._onChangeLocationDisplay = this._onChangeLocationDisplay.bind(this);
   }
 
   componentDidMount() {
+    this._onChangeLocationDisplay();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._onChangeLocationDisplay(nextProps);
+  }
+
+  // When user searches location
+  _onChangeLocationDisplay(nextProps) {
     const now = new Date();
     const today = now.getDay();
-    const url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
-        this.props.latitude+'&lon='+this.props.longitude+
-        '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
+    var url_forecast = '';
+
+    if(arguments.length == 0) {
+      url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
+          this.props.latitude+'&lon='+this.props.longitude+
+          '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
+    } else {
+      url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
+          nextProps.latitude+'&lon='+nextProps.longitude+
+          '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'}
 
     const weekDicc = {
       0: {day: "SUN"},
@@ -71,6 +88,9 @@ export default class ForecastDisplay extends Component {
             break;
           case 'moderate rain':
             day.icon = lightRain;
+            break;
+          case 'very heavy rain':
+            day.icon = heavyRainIcon;
             break;
           case 'scattered clouds':
           case 'overcast clouds':

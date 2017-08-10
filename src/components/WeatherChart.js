@@ -8,13 +8,13 @@ export default class WeatherChart extends Component {
     this.state = {
       config: {
         xAxis: {
-          categories: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+          categories: ['00', '03', '06', '09', '12', '15', '18', '21'],
         },
         series: [{
           data: [],
         }]
       },
-      categoryModify: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+      categoryModify: ['00', '03', '06', '09', '12', '15', '18', '21'],
       dayTemps: undefined,
     }
 
@@ -101,11 +101,9 @@ export default class WeatherChart extends Component {
       }
     }
     for (let item of dayTemps) {
-      console.log(arrayAvgTemps);
       if(today+dayTemps.indexOf(item) > 6) {
         dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)-7];
       } else {
-        console.log(dayTemps.indexOf(item))
         dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)];
       }
     }
