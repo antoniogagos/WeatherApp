@@ -35,7 +35,7 @@ export default class ForecastDisplay extends Component {
     const today = now.getDay();
     var url_forecast = '';
 
-    if(arguments.length == 0) {
+    if(arguments.length === 0) {
       url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
           this.props.latitude+'&lon='+this.props.longitude+
           '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
@@ -64,7 +64,6 @@ export default class ForecastDisplay extends Component {
     }
 
     axios.get(url_forecast).then(function(response) {
-
       for (let daily of response.data.list) {
         let index = response.data.list.indexOf(daily);
         followingDays[index].temp_min = daily.temp.min;
@@ -126,10 +125,8 @@ export default class ForecastDisplay extends Component {
   render() {
     let allDays = this.state.nextForecastDays;
     if(!allDays) { return (<h1>loading</h1>)}
-
-
     let addClassDay = item => {
-      if(this.state.addClassIndex == allDays.indexOf(item)) {
+      if(this.state.addClassIndex === allDays.indexOf(item)) {
         return 'day day__selected'
       } else {
         return 'day'
@@ -141,7 +138,6 @@ export default class ForecastDisplay extends Component {
         <div className="day__avgTemp">{Math.round(item.temp_max)}º/{Math.round(item.temp_min)}º</div>
         <img className="day__icon" src={item.icon} alt="weather icon"/>
       </div>);
-
     return (
       <div>
         <UserLocationInfo latitude={this.props.latitude} longitude={this.props.longitude} 

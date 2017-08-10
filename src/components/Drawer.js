@@ -4,10 +4,7 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import InboxIcon from 'material-ui-icons/Inbox';
-import DraftsIcon from 'material-ui-icons/Drafts';
 import StarIcon from 'material-ui-icons/Star';
-import SendIcon from 'material-ui-icons/Send';
 import MenuIcon from 'material-ui-icons/Menu';
 
 const styleSheet = createStyleSheet({
@@ -44,28 +41,15 @@ class UndockedDrawer extends Component {
       <div>
         <ListItem button>
           <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inbox" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
             <StarIcon />
           </ListItemIcon>
-          <ListItemText primary="Starred" />
+          <ListItemText primary="Antonio Garcia"/>
         </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <SendIcon />
-          </ListItemIcon>
-          <ListItemText primary="Send mail" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Drafts" />
-        </ListItem>
+        
+       <div className="drawer_content">
+        <a className="drawer_content__link"href="https://github.com/antoniogagos">Github</a>
+        <span className="drawer_content__text">Weather App built with React using Highcharts and OpenWeatherMap API</span>
+       </div>
       </div>
     );
 

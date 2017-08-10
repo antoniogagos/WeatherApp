@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import registerServiceWorker from './registerServiceWorker';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
-import createMuiTheme from 'material-ui/styles/theme';
 import Typography from 'material-ui/Typography';
-import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 
 import LeftDrawer from './components/Drawer.js'
 import ForecastDisplay from './components/ForecastDisplay.js';

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-const ReactHighcharts = require('react-highcharts'); // Expects that Highcharts was loaded in the code.
+const ReactHighcharts = require('react-highcharts');
 
 export default class WeatherChart extends Component {
   constructor(props) {
@@ -17,7 +17,6 @@ export default class WeatherChart extends Component {
       categoryModify: ['00', '03', '06', '09', '12', '15', '18', '21'],
       dayTemps: undefined,
     }
-
     this._displaySelectedDayChart = this._displaySelectedDayChart.bind(this);
     this._slicePastHoursChart = this._slicePastHoursChart.bind(this);
   }
@@ -89,7 +88,6 @@ export default class WeatherChart extends Component {
       avg[weekDay] = avg[weekDay] || [];
       avg[weekDay].push(item);
     }
-
     var arrayAvgTemps = [];
     for (let day of avg) {
       if(!day) {} else {
@@ -107,7 +105,6 @@ export default class WeatherChart extends Component {
         dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)];
       }
     }
-      console.log(dayTemps);
     this.setState({
       dayTemps: dayTemps
     });

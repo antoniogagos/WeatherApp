@@ -9,10 +9,11 @@ export default class UserLocationInfo extends Component {
       temperature: undefined,
       humidity: undefined,
       place: undefined,
+      latitude: undefined,
+      longitude: undefined,
 
       today_temp: undefined,
       today_humidity: undefined,
-
       search: false
     }
 
@@ -25,8 +26,8 @@ export default class UserLocationInfo extends Component {
 
   // refactor this
   _requestLocationInfo(nextProps) {
-    var url = '' 
-    if(arguments.length == 0) {
+    var url = '';
+    if(arguments.length === 0) {
       url = 'http://api.openweathermap.org/data/2.5/weather?lat='+
         this.props.latitude+'&lon='+this.props.longitude+
         '&appid=9004c6600242d177657696c6f37cd725&units=metric'
@@ -50,6 +51,9 @@ export default class UserLocationInfo extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if(nextProps.latitude !== this.props.latitude) {
+      this._requestLocationInfo(nextProps);
+    }
     if(nextProps.day !== this.state.today) {
       let avg_temperature = (nextProps.day.temp_min + nextProps.day.temp_max)/2;
       this.setState({
@@ -62,7 +66,6 @@ export default class UserLocationInfo extends Component {
         humidity: this.state.today_humidity
       });
     }
-    this._requestLocationInfo(nextProps);
   }
 
   render() {
