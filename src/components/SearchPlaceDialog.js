@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete'
-import { geocodeByAddress, geocodeByPlaceId, getLatLng } from 'react-places-autocomplete'
-import PropTypes from 'prop-types';
-import { createStyleSheet, withStyles } from 'material-ui/styles';
+import { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 import Button from 'material-ui/Button';
-import Avatar from 'material-ui/Avatar';
-import List, { ListItem, ListItemAvatar, ListItemText } from 'material-ui/List';
 import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog'
-import Typography from 'material-ui/Typography';
-import blue from 'material-ui/colors/blue';
 import IconButton from 'material-ui/IconButton';
 import SvgIcon from 'material-ui/SvgIcon';
 
@@ -17,7 +10,6 @@ class SearchPlaceDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       lat: undefined,
       lng: undefined
     }
@@ -38,11 +30,7 @@ class SearchPlaceDialog extends Component {
   render() {
     return (
       <div>
-        <Typography type="subheading">
-          Selected: {this.state.lat} and {this.state.lng}
-        </Typography>
-        <br />
-        <IconButton style={{position: 'absolute', top: 0, zIndex: 1150, right: 20, marginTop: 2}} onClick={() => this.setState({ open: true })}>
+        <IconButton onClick={() => this.setState({ open: true })}>
           <SvgIcon style={{width: 24, height: 24}}>
             <svg fill="#fff" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg">
               <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -109,9 +97,9 @@ class SearchPlace extends Component {
     }
 
     return (
-      <form style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}} onSubmit={this.handleFormSubmit}>
+      <form style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', padding: 40}} onSubmit={this.handleFormSubmit}>
         <PlacesAutocomplete googleLogo={false} inputProps={inputProps} />
-        <Button onClick={this._handleOnSearch} style={{marginTop: 20}}raised color="primary">Search</Button>
+        <Button onClick={this._handleOnSearch} style={{marginTop: 20}} raised color="primary">Search</Button>
       </form>
     )
   }

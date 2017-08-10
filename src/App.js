@@ -1,28 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import registerServiceWorker from './registerServiceWorker';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
-import Button from 'material-ui/Button';
-
-import SvgIcon from 'material-ui/SvgIcon';
+import createMuiTheme from 'material-ui/styles/theme';
+import Typography from 'material-ui/Typography';
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
+
+import LeftDrawer from './components/Drawer.js'
 import ForecastDisplay from './components/ForecastDisplay.js';
 import SearchPlaceDialog from './components/SearchPlaceDialog.js';
 import './App.css';
 
 
-const google = window.google;
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       latitude: undefined,
       longitude: undefined,
       search: true,
@@ -44,17 +39,7 @@ class App extends Component {
 
   }
 
-  _handleOnSearch() {
-    console.log("hola");
-  }
-
   render() {
-    const muiTheme = getMuiTheme({
-      appBar: {
-        height: 50,
-        color: '#2196f3',
-      },
-    });
 
     if(!this.state.latitude || !this.state.longitude) {
       return (
@@ -71,40 +56,31 @@ class App extends Component {
         </div>
       )
     }
-    const displaySearch = this.state.search;
-
     return (
-      
       <div className="App">
-        <MuiThemeProvider muiTheme={muiTheme}>
           <div>
-            <AppBar
-                title="Tempo"
-                titleStyle={{color: '#fff', marginRight: 20}}
-                iconElementLeft={<IconButton><NavigationMenu color={'#fff'}/></IconButton>}
-                onLeftIconButtonTouchTap={this._handleClickDrawer}/>
-
-            <SearchPlaceDialog onUserSearch={this.handleUserSearch}/>
+            <div>
+              <AppBar position="static">
+                <Toolbar>
+                  <IconButton color="contrast" aria-label="Menu">
+                    <LeftDrawer />
+                  </IconButton>
+                  <Typography type="title" color="inherit" style={{flex: 1}}>
+                    Tempo
+                 </Typography>
+                <SearchPlaceDialog onUserSearch={this.handleUserSearch}/>
+                </Toolbar>
+              </AppBar>
+            </div>
             <ForecastDisplay latitude={this.state.latitude} longitude={this.state.longitude}/>
-
-            <Drawer 
-                open={this.state.open}
-                docked={false} 
-                onRequestChange={(open) => this.setState({open})}>
-              <MenuItem>Menu Item</MenuItem>
-              <MenuItem>Menu Item 2</MenuItem>
-            </Drawer>
           </div>
-        </MuiThemeProvider>
-
       </div>
     );
   }
 
-  _handleClickDrawer = () => this.setState({open: !this.state.open});
+  _handleClickDrawer = () => this.setState({open: true});
 
   handleUserSearch = (lat, lng) => {
-    console.log('t e m p o');
     this.setState({ 
       latitude: lat,
       longitude: lng

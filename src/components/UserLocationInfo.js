@@ -58,7 +58,6 @@ export default class UserLocationInfo extends Component {
         nextProps.latitude+'&lon='+nextProps.longitude+
         '&appid=9004c6600242d177657696c6f37cd725&units=metric')
       .then(function(response) {
-        console.log(response);
         let data = response.data.main;
         this.setState({
           temperature: data.temp,

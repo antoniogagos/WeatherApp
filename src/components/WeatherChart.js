@@ -101,10 +101,13 @@ export default class WeatherChart extends Component {
       }
     }
     for (let item of dayTemps) {
+      console.log(arrayAvgTemps);
       if(today+dayTemps.indexOf(item) > 6) {
         dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)-7];
+      } else {
+        console.log(dayTemps.indexOf(item))
+        dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)];
       }
-       dayTemps[dayTemps.indexOf(item)].temps = arrayAvgTemps[today+dayTemps.indexOf(item)];
     }
       console.log(dayTemps);
     this.setState({
