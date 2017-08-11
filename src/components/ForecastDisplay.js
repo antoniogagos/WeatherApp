@@ -36,11 +36,11 @@ export default class ForecastDisplay extends Component {
     var url_forecast = '';
 
     if(arguments.length === 0) {
-      url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
+      url_forecast = 'https://api.openweathermap.org/data/2.5/forecast/daily?lat='+
           this.props.latitude+'&lon='+this.props.longitude+
           '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'
     } else {
-      url_forecast = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+
+      url_forecast = 'https://api.openweathermap.org/data/2.5/forecast/daily?lat='+
           nextProps.latitude+'&lon='+nextProps.longitude+
           '&appid=9004c6600242d177657696c6f37cd725&units=metric&units=metric&cnt=5'}
 
@@ -98,13 +98,11 @@ export default class ForecastDisplay extends Component {
             day.icon = cloudsIcon;
             break;
         }
-
       }
       this.setState({ 
         nextForecastDays: followingDays,
         selectedDay: followingDays[0]
       });
-
     }.bind(this));
   }
 
@@ -126,7 +124,7 @@ export default class ForecastDisplay extends Component {
     let allDays = this.state.nextForecastDays;
     if(!allDays) { return (<h1>loading</h1>)}
     let addClassDay = item => {
-      if(this.state.addClassIndex === allDays.indexOf(item)) {
+      if(this.state.addClassIndex == allDays.indexOf(item)) {
         return 'day day__selected'
       } else {
         return 'day'

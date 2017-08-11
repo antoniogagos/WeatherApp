@@ -2,10 +2,16 @@
 
 body {
   font-family: 'Roboto', sans-serif;
+  margin: 0 auto;
 }
 
 .App {
   text-align: center;
+}
+
+.container {
+  max-width: 750px;
+  margin: 0 auto;
 }
 
 .App-logo {
@@ -20,32 +26,28 @@ body {
   color: white;
 }
 
-.App-intro {
-  font-size: large;
-}
-
 #degrees {
   margin: 0;
   display: flex;
-  margin: 50px 0 40px 50px;
+  margin: 20px 0 40px 50px;
 }
 
 .degrees__place {
   align-self: center;
-  color: #b5b5b5;
+  color: #3f51b5;
   font-weight: 100;
   margin-left: -20px;
   margin-top: 45px;
 }
 
 .degrees__number {
-  color: #797979;
+  color: #3f51b5;
   font-weight: 100;
   font-size: 72px;
 }
 
 #info {
-  color: #a9bcce;
+  color: #3f51b5;
   display: flex;
   font-size: 22px;
   font-weight: 100;
@@ -67,21 +69,19 @@ body {
 }
 
 .info__description {
-  color: #b5b5b5;
+  color: #3f51b5;
   font-weight: 100;
-  align-self: flex-end;
-  font-size: 15px;
-  margin-bottom: 1px;
+  font-size: 20px;
 }
 
 #listDays {
   display: flex;
   justify-content: space-around;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .day {
-  padding: 5px;
+  padding: 2px 10px;
 }
 
 .day__avgTemp {
@@ -89,12 +89,13 @@ body {
 }
 
 .day__icon {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
 }
 
 .day__selected {
-  background-color: #fbfbfb 
+  background-color: #fbfbfb;
+  box-shadow: 0px 0px 1px #7b7b7b;
 }
 
 .highcharts-root {
@@ -150,6 +151,34 @@ body {
 .drawer_content__link {
   color: #616161;
   font-weight: bold;
+}
+
+#weatherChart {
+  margin-top: 20px;
+}
+
+.highcharts-y-axis {
+  font-weight: lighter;
+  fill: #3f51b5;
+  stroke: #3f51b5;
+}
+.highcharts-axis.highcharts-y-axis text {
+  font-weight: lighter;
+  fill: #3f51b5;
+  stroke: #3f51b5;
+}
+
+.highcharts-yaxis .highcharts-axis-line {
+	stroke-width: 2px;
+}
+
+.highcharts-xaxis .highcharts-axis-line {
+  stroke-width: 2px;
+  fill: #3f51b5;
+  stroke: #3f51b5;
+}
+.highcharts-axis.highcharts-x-axis text {
+  font-weight: lighter;
 }
 
 

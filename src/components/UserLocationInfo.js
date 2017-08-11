@@ -24,15 +24,14 @@ export default class UserLocationInfo extends Component {
     this._requestLocationInfo();
   }
 
-  // refactor this
   _requestLocationInfo(nextProps) {
     var url = '';
     if(arguments.length === 0) {
-      url = 'http://api.openweathermap.org/data/2.5/weather?lat='+
+      url = 'https://api.openweathermap.org/data/2.5/weather?lat='+
         this.props.latitude+'&lon='+this.props.longitude+
         '&appid=9004c6600242d177657696c6f37cd725&units=metric'
     } else {
-      url = 'http://api.openweathermap.org/data/2.5/weather?lat='+
+      url = 'https://api.openweathermap.org/data/2.5/weather?lat='+
         nextProps.latitude+'&lon='+nextProps.longitude+
         '&appid=9004c6600242d177657696c6f37cd725&units=metric'
     }

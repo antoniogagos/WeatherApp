@@ -47,7 +47,7 @@ class UndockedDrawer extends Component {
         </ListItem>
         
        <div className="drawer_content">
-        <a className="drawer_content__link"href="https://github.com/antoniogagos">Github</a>
+        <a className="drawer_content__link" href="https://github.com/antoniogagos">Github</a>
         <span className="drawer_content__text">Weather App built with React using Highcharts and OpenWeatherMap API</span>
        </div>
       </div>
@@ -71,7 +71,6 @@ class UndockedDrawer extends Component {
             onClick={this.handleLeftClose}>
           {sideList}
         </Drawer>
-        
       </div>
     );
   }
